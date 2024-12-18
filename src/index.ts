@@ -3,6 +3,7 @@ import { Command } from "commander";
 import { AuthService } from "./services/auth.service";
 import { PasswordService } from "./services/password.service";
 import { generatePassword } from "./utils/generate.util";
+import { SessionManager } from "./utils/session.util";
 
 const program = new Command();
 
@@ -109,3 +110,13 @@ program
 //   3.	Synchronization: Sync the password database with cloud storage for multi-device access.
 
 program.parse(process.argv);
+
+// Set up periodic session refresh every 5 minutes
+const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
+
+setInterval(() => {
+  const currentSession = SessionManager.getSession();
+  if (currentSession) {
+    SessionManager.refreshSession();
+  }
+}, REFRESH_INTERVAL);
